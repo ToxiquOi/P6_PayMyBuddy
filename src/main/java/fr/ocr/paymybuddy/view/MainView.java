@@ -4,8 +4,7 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import fr.ocr.paymybuddy.service.AuthenticationService;
-import fr.ocr.paymybuddy.view.component.MainDrawer;
-import fr.ocr.paymybuddy.view.component.MainHeader;
+import fr.ocr.paymybuddy.view.component.nav.MainHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.security.PermitAll;

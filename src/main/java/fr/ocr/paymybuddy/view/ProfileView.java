@@ -51,10 +51,10 @@ public class ProfileView extends VerticalLayout {
     }
 
     public void enableForm() {
-        profileForm.setFormEnabled(true);
+        profileForm.setFormReadOnly(false);
     }
 
     public void disableForm() {
-        profileForm.setFormEnabled(false);
+        profileForm.setFormReadOnly(true);
     }
 }

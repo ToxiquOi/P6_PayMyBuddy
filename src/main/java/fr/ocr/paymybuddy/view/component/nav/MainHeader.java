@@ -1,4 +1,4 @@
-package fr.ocr.paymybuddy.view.component;
+package fr.ocr.paymybuddy.view.component.nav;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Unit;
@@ -10,6 +10,7 @@ import com.vaadin.flow.router.RouterLink;
 import fr.ocr.paymybuddy.service.AuthenticationService;
 import fr.ocr.paymybuddy.view.MainView;
 import fr.ocr.paymybuddy.view.ProfileView;
+import fr.ocr.paymybuddy.view.component.AppLogoComponent;
 
 public class MainHeader extends HorizontalLayout {
 

@@ -23,7 +23,7 @@ public class ProfileForm extends AbstractUserForm {
         setUser(user.user());
         setMaxWidth(100, Unit.MM);
 
-        setFormEnabled(true);
+        setFormReadOnly(false);
 
         add(this.getFirstname(),
                 this.getLastname(),
@@ -33,21 +33,19 @@ public class ProfileForm extends AbstractUserForm {
         );
     }
 
-    public void setFormEnabled(boolean enabled) {
-        getFirstname().setEnabled(enabled);
-        getLastname().setEnabled(enabled);
-        getBirthdate().setEnabled(enabled);
-        getEmail().setEnabled(enabled);
+    public void setFormReadOnly(boolean enabled) {
+        getFirstname().setReadOnly(enabled);
+        getLastname().setReadOnly(enabled);
+        getBirthdate().setReadOnly(enabled);
+        getEmail().setReadOnly(enabled);
 
+        edit.setVisible(enabled);
+        edit.setEnabled(enabled);
 
-        edit.setVisible(!enabled);
-        edit.setEnabled(!enabled);
-
-
-        save.setVisible(enabled);
-        save.setEnabled(enabled);
-        cancel.setVisible(enabled);
-        cancel.setEnabled(enabled);
+        save.setVisible(!enabled);
+        save.setEnabled(!enabled);
+        cancel.setVisible(!enabled);
+        cancel.setEnabled(!enabled);
     }
 
     @Override
