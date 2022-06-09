@@ -4,13 +4,12 @@ package fr.ocr.paymybuddy.entity;
 import fr.ocr.paymybuddy.security.UserRole;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
+
 import javax.validation.constraints.Email;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -28,8 +27,6 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String lastname;
-
-    private UserRole role;
 
     @Email
     @Column(nullable = false, unique = true)
