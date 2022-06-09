@@ -12,7 +12,7 @@ public record MyUserDetails(UserEntity user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getValue());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("USER");
         return List.of(authority);
     }
 
