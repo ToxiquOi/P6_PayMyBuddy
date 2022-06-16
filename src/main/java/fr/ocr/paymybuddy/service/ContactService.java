@@ -2,53 +2,59 @@ package fr.ocr.paymybuddy.service;
 
 import fr.ocr.paymybuddy.dao.UserRepository;
 import fr.ocr.paymybuddy.entity.UserEntity;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
+@Lazy
 @Service
 public class ContactService {
 
     private final UserRepository userRepository;
-    private final AuthenticationService authenticationService;
+    private final UserEntity currentUser;
 
     @Autowired
-    public ContactService(UserRepository userRepository, AuthenticationService authenticationService) {
+    public ContactService( UserRepository userRepository, AuthenticationService authenticationService) {
         this.userRepository = userRepository;
-        this.authenticationService = authenticationService;
+        currentUser = authenticationService.getAuthenticatedUser().user();
     }
 
     public List<UserEntity> findUserNotInContact() {
-        UserEntity authUser = authenticationService.getAuthenticatedUser().user();
-        return this.userRepository.findUserEntityByContactsIsNotContainingAndIdIsNot(authUser, authUser.getId());
+        return this.userRepository.findUserEntityByContactsIsNotContainingAndIdIsNot(currentUser, currentUser.getId());
     }
 
-    public List<UserEntity> findCurrentUserContact() {
-        UserEntity authUser = authenticationService.getAuthenticatedUser().user();
-        return this.userRepository.findById(authUser.getId()).get().getContacts();
+    public Set<UserEntity> findCurrentUserContact() {
+        return this.userRepository.getUserEntityByEmail(currentUser.getEmail()).get().getContacts();
     }
 
     public void addContactsToUser(Collection<UserEntity> contacts) {
-        UserEntity authUser = authenticationService.getAuthenticatedUser().user();
-        Hibernate.initialize(authUser.getContacts());
-
-        if(authUser.getContacts() == null) {
-            authUser.setContacts(new ArrayList<>());
+        for(UserEntity contact : contacts) {
+            if(!currentUser.getContacts().contains(contact) && !contact.getContacts().contains(currentUser)) {
+                currentUser.addContact(contact);
+                contact.addContact(currentUser);
+            }
         }
 
-        for(UserEntity contact : contacts) {
-            if(!authUser.getContacts().contains(contact) && !contact.getContacts().contains(authUser)) {
-                contact.getContacts().add(authUser);
-                authUser.getContacts().add(contact);
-            }
-        };
+        List<UserEntity> list = new ArrayList<>(contacts);
+        list.add(currentUser);
 
-        userRepository.save(authUser);
-        userRepository.saveAll(contacts);
+        userRepository.saveAll(list);
+    }
+
+    public void removeContactFromUser(Collection<UserEntity> contacts) {
+        for(UserEntity contact : contacts) {
+            currentUser.removeContact(contact);
+            contact.removeContact(currentUser);
+        }
+
+        List<UserEntity> list = new ArrayList<>(contacts);
+        list.add(currentUser);
+
+        userRepository.saveAll(list);
     }
 }

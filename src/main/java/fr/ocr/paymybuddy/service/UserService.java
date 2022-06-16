@@ -44,7 +44,6 @@ public class UserService {
 
     public void saveUser(UserEntity contact) {
         if (contact == null) {
-
             System.err.println("Contact is null. Are you sure you have connected your form to the application?");
             return;
         }

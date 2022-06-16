@@ -5,7 +5,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import fr.ocr.paymybuddy.entity.UserEntity;
-import fr.ocr.paymybuddy.service.AuthenticationService;
 import fr.ocr.paymybuddy.service.ContactService;
 
 import javax.annotation.security.PermitAll;
@@ -16,27 +15,36 @@ import java.util.Set;
 public class ContactView extends VerticalLayout {
 
     private final Grid<UserEntity> usersGrid = new Grid<>(UserEntity.class);
-    private final Button addUserSectedButton = new Button("Add to contacts");
-
     private final Grid<UserEntity> contactGrid = new Grid<>(UserEntity.class);
 
     private final ContactService contactService;
-    private final AuthenticationService authenticationService;
 
-    public ContactView(ContactService contactService, AuthenticationService authenticationService) {
+    public ContactView(ContactService contactService) {
         this.contactService = contactService;
-        this.authenticationService = authenticationService;
         addClassName("contact-view");
         setSizeFull();
 
-        addUserSectedButton.addClickListener(buttonClickEvent -> contactService.addContactsToUser(getSelectedUsers()));
+        Button addUserSelectedButton = new Button("Add to contacts", buttonClickEvent -> {
+            contactService.addContactsToUser(getSelectedUsers());
+            updateView();
+        });
 
-        add(addUserSectedButton, createUserGrid(), createContactGrid());
+        Button removeSelectedButton = new Button("Remove contacts", buttonClickEvent -> {
+            contactService.removeContactFromUser(getSelectedContacts());
+            updateView();
+        });
+
+        add(addUserSelectedButton, createUserGrid(), createContactGrid(), removeSelectedButton);
+        updateView();
+    }
+
+    private void updateView() {
         updateUserGrid();
         updateContactGrid();
     }
 
     private void updateUserGrid() {
+
         usersGrid.setItems(contactService.findUserNotInContact());
     }
 

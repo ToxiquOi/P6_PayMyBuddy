@@ -1,7 +1,5 @@
 package fr.ocr.paymybuddy.entity;
 
-
-import fr.ocr.paymybuddy.security.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,8 +7,8 @@ import javax.persistence.*;
 
 import javax.validation.constraints.Email;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -38,6 +36,18 @@ public class UserEntity {
     @Column(nullable = false)
     private LocalDate birthdate;
 
-    @ManyToMany
-    private List<UserEntity> contacts = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    private Set<UserEntity> contacts = new HashSet<>();
+
+    private void setContacts(Set<UserEntity> contacts) {
+        this.contacts = contacts;
+    }
+
+    public void removeContact(UserEntity user) {
+        contacts.remove(user);
+    }
+
+    public void addContact(UserEntity user) {
+        contacts.add(user);
+    }
 }
