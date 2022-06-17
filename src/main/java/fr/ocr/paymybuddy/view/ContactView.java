@@ -1,6 +1,7 @@
 package fr.ocr.paymybuddy.view;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -25,14 +26,24 @@ public class ContactView extends VerticalLayout {
         setSizeFull();
 
         Button addUserSelectedButton = new Button("Add to contacts", buttonClickEvent -> {
-            contactService.addContactsToUser(getSelectedUsers());
-            updateView();
+            Set<UserEntity> users = getSelectedUsers();
+            if(users != null && !users.isEmpty()) {
+                contactService.addContactsToUser(users);
+                updateView();
+            }
         });
 
+        addUserSelectedButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
         Button removeSelectedButton = new Button("Remove contacts", buttonClickEvent -> {
-            contactService.removeContactFromUser(getSelectedContacts());
-            updateView();
+            Set<UserEntity> users = getSelectedContacts();
+            if(users != null && !users.isEmpty()) {
+                contactService.removeContactFromUser(users);
+                updateView();
+            }
         });
+
+        removeSelectedButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         add(addUserSelectedButton, createUserGrid(), createContactGrid(), removeSelectedButton);
         updateView();
@@ -44,7 +55,6 @@ public class ContactView extends VerticalLayout {
     }
 
     private void updateUserGrid() {
-
         usersGrid.setItems(contactService.findUserNotInContact());
     }
 

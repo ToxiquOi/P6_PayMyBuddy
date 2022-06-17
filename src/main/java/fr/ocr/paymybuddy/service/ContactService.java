@@ -49,7 +49,6 @@ public class ContactService {
             contact.removeContact(currentUser);
         }
 
-
         currentUser = userRepository.save(currentUser);
         userRepository.saveAllAndFlush(contacts);
     }
