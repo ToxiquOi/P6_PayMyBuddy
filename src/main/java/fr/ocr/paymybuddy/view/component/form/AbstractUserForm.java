@@ -19,7 +19,7 @@ import lombok.Getter;
 public abstract class AbstractUserForm extends FormLayout {
 
     protected final TextField firstname = new TextField("First Name");
-    protected final TextField lastname = new TextField("First Name");
+    protected final TextField lastname = new TextField("Last Name");
     protected final EmailField email = new EmailField("Email");
     protected final PasswordField password = new PasswordField("Password");
     protected final DatePicker birthdate = new DatePicker("Birthdate");
