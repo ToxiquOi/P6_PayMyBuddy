@@ -16,7 +16,7 @@ import java.util.Set;
 public class ContactService {
 
     private final UserRepository userRepository;
-    private final UserEntity currentUser;
+    private UserEntity currentUser;
 
     @Autowired
     public ContactService( UserRepository userRepository, AuthenticationService authenticationService) {
@@ -40,10 +40,7 @@ public class ContactService {
             }
         }
 
-        List<UserEntity> list = new ArrayList<>(contacts);
-        list.add(currentUser);
-
-        userRepository.saveAll(list);
+        currentUser = userRepository.saveAndFlush(currentUser);
     }
 
     public void removeContactFromUser(Collection<UserEntity> contacts) {
@@ -52,9 +49,8 @@ public class ContactService {
             contact.removeContact(currentUser);
         }
 
-        List<UserEntity> list = new ArrayList<>(contacts);
-        list.add(currentUser);
 
-        userRepository.saveAll(list);
+        currentUser = userRepository.save(currentUser);
+        userRepository.saveAllAndFlush(contacts);
     }
 }

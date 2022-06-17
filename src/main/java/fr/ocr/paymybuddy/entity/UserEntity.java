@@ -36,17 +36,22 @@ public class UserEntity {
     @Column(nullable = false)
     private LocalDate birthdate;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}
+    )
     private Set<UserEntity> contacts = new HashSet<>();
 
+    @Transient
     private void setContacts(Set<UserEntity> contacts) {
         this.contacts = contacts;
     }
 
+    @Transient
     public void removeContact(UserEntity user) {
-        contacts.remove(user);
+        contacts.removeIf(contact -> contact.getId() == user.getId());
     }
 
+    @Transient
     public void addContact(UserEntity user) {
         contacts.add(user);
     }
