@@ -2,6 +2,7 @@ package fr.ocr.paymybuddy.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 
@@ -9,6 +10,8 @@ import javax.validation.constraints.Email;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.hibernate.annotations.CascadeType.*;
 
 @Getter
 @Setter
@@ -36,9 +39,8 @@ public class UserEntity {
     @Column(nullable = false)
     private LocalDate birthdate;
 
-    @ManyToMany(fetch = FetchType.EAGER,
-            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}
-    )
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Cascade({SAVE_UPDATE})
     private Set<UserEntity> contacts = new HashSet<>();
 
     @Transient
