@@ -44,6 +44,13 @@ public abstract class AbstractUserForm extends FormLayout {
         binder.readBean(user);
     }
 
+    public void setFormReadOnly(boolean enabled) {
+        getFirstname().setReadOnly(enabled);
+        getLastname().setReadOnly(enabled);
+        getBirthdate().setReadOnly(enabled);
+        getEmail().setReadOnly(enabled);
+    }
+
     protected void validateAndSave() {
         try {
             binder.writeBean(user);

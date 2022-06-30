@@ -33,11 +33,9 @@ public class ProfileForm extends AbstractUserForm {
         );
     }
 
+    @Override
     public void setFormReadOnly(boolean enabled) {
-        getFirstname().setReadOnly(enabled);
-        getLastname().setReadOnly(enabled);
-        getBirthdate().setReadOnly(enabled);
-        getEmail().setReadOnly(enabled);
+        super.setFormReadOnly(enabled);
 
         edit.setVisible(enabled);
         edit.setEnabled(enabled);
