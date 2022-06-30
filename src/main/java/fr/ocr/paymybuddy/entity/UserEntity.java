@@ -40,7 +40,7 @@ public class UserEntity {
     private LocalDate birthdate;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @Cascade({SAVE_UPDATE})
+    @Cascade({MERGE, PERSIST, REFRESH})
     private Set<UserEntity> contacts = new HashSet<>();
 
     @Transient
