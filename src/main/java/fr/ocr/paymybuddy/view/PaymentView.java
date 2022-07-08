@@ -1,55 +1,111 @@
 package fr.ocr.paymybuddy.view;
 
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.Route;
-import fr.ocr.paymybuddy.entity.UserEntity;
+import fr.ocr.paymybuddy.entity.PaymentEntity;
+import fr.ocr.paymybuddy.exception.WalletBalanceException;
+import fr.ocr.paymybuddy.service.AuthenticationService;
 import fr.ocr.paymybuddy.service.ContactService;
+import fr.ocr.paymybuddy.service.PaymentService;
+import fr.ocr.paymybuddy.service.UserService;
+import fr.ocr.paymybuddy.view.component.form.PaymentForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.vaadin.klaudeta.PaginatedGrid;
 
 import javax.annotation.security.PermitAll;
-import java.util.Set;
+import java.util.Date;
 
 @PermitAll
 @Route(value = "payment", layout = MainView.class)
 public class PaymentView extends VerticalLayout {
 
+    private final UserService userService;
     private final ContactService contactService;
+    private final PaymentService paymentService;
+
+    private final PaginatedGrid<PaymentEntity> paymentEntityGrid = new PaginatedGrid<>(PaymentEntity.class);
 
     @Autowired
-    public PaymentView(ContactService contactService) {
+    public PaymentView(ContactService contactService, PaymentService paymentService, UserService userService) {
+        addClassName("payment-view");
+        this.userService = userService;
         this.contactService = contactService;
+        this.paymentService = paymentService;
 
-        add(createPaymentPanel());
+        add(createPaymentForm(), configureGrid());
+        updateGrid();
     }
 
-    public HorizontalLayout createPaymentPanel() {
-
-        Set<UserEntity> contacts = contactService.findCurrentUserContact();
-
-        Select<UserEntity> contactSelect = new Select<>();
-        contactSelect.setLabel("Contact");
-        contactSelect.setItems(contacts);
-        contactSelect.setItemLabelGenerator(user -> user.getFirstname() + " " + user.getLastname());
-        contactSelect.setValue(contacts.isEmpty() ? contactSelect.getEmptyValue() : contacts.iterator().next());
-
-        IntegerField integerField = new IntegerField();
-        Div euroPrefix = new Div();
-        euroPrefix.setText("€");
-        integerField.setValue(0);
-        integerField.setSuffixComponent(euroPrefix);
-        integerField.setHasControls(true);
-        integerField.setMin(0);
-
-        Button payButton = new Button("Pay");
-
-        HorizontalLayout paymentPanel = new HorizontalLayout(contactSelect, integerField, payButton);
-        paymentPanel.setAlignItems(Alignment.END);
-
-       return paymentPanel;
+    public void updateGrid() {
+        this.paymentEntityGrid.setItems(userService.getCurrentUser()
+                .getWallet()
+                .getPayments()
+                .stream()
+                .sorted((pay1, pay2) -> pay2.getTransactionDate().compareTo(pay1.getTransactionDate()))
+                .toList());
     }
+
+    public FormLayout createPaymentForm() {
+        PaymentForm form = new PaymentForm(contactService, userService);
+        form.addListener(PaymentForm.SendEvent.class, event -> {
+            try {
+                paymentService.proceedToPayment(event.getPaymentEntity());
+                UI.getCurrent().access(() -> {
+                    Notification notif = new Notification();
+                    notif.add(new Text("Payment done "), new Icon("lumo", "checkmark"));
+                    notif.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    notif.setDuration(3600);
+                    notif.open();
+                });
+            } catch (WalletBalanceException ex) {
+                UI.getCurrent().access(() -> {
+                    Notification notif = Notification.show("Cannot proceed to payment, please check your wallet balance");
+                    notif.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                });
+            }
+            updateGrid();
+        });
+
+        setHorizontalComponentAlignment(Alignment.CENTER, form);
+
+       return form;
+    }
+
+    public Grid<PaymentEntity> configureGrid() {
+        paymentEntityGrid.addClassName("payment-grid");
+        paymentEntityGrid.removeAllColumns();
+
+        paymentEntityGrid.addColumn(paymentEntity -> StringUtils.capitalize(paymentEntity.getSender().getUser().getFirstname()) + " " + StringUtils.capitalize(paymentEntity.getSender().getUser().getLastname()))
+                .setHeader("Sender")
+                .setSortable(true);
+        paymentEntityGrid.addColumn(paymentEntity -> StringUtils.capitalize(paymentEntity.getReceiver().getUser().getFirstname()) + " " + StringUtils.capitalize(paymentEntity.getReceiver().getUser().getLastname()))
+                .setHeader("Receiver")
+                .setSortable(true);
+        paymentEntityGrid.addColumn(PaymentEntity::getValue)
+                .setHeader("Montant")
+                .setSortable(true);
+        paymentEntityGrid.addColumn(PaymentEntity::getMessage)
+                .setHeader("Message");
+        Grid.Column<PaymentEntity> colDate = paymentEntityGrid.addColumn(PaymentEntity::getTransactionDate)
+                .setHeader("Date")
+                .setSortable(true);
+
+        colDate.setComparator((payment1, payment2) -> payment2.getTransactionDate().compareTo(payment1.getTransactionDate()));
+
+        paymentEntityGrid.setPageSize(10);
+        paymentEntityGrid.setPaginatorSize(5);
+
+        return paymentEntityGrid;
+    }
+
+
 }

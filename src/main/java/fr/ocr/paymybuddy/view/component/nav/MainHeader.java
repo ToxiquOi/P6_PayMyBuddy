@@ -34,6 +34,7 @@ public class MainHeader extends HorizontalLayout {
         RouterLink contactLnk = new RouterLink("Contact", ContactView.class);
         RouterLink transferLnk = new RouterLink("Transfer", PaymentView.class);
         RouterLink homeLnk = new RouterLink("Home", MainView.class);
+
         add(new DrawerToggle(), getLogo(), homeLnk, transferLnk, profileLnk, contactLnk, logout);
     }
 

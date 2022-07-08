@@ -1,5 +1,6 @@
 package fr.ocr.paymybuddy.entity;
 
+import fr.ocr.paymybuddy.builder.WalletBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
@@ -16,6 +17,7 @@ import static org.hibernate.annotations.CascadeType.*;
 @Getter
 @Setter
 @Entity(name = "user")
+@Table(name = "users")
 public class UserEntity {
 
     @Id
@@ -39,9 +41,19 @@ public class UserEntity {
     @Column(nullable = false)
     private LocalDate birthdate;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @Cascade({MERGE, PERSIST, REFRESH})
+    private WalletEntity wallet;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @Cascade({MERGE, PERSIST, REFRESH})
     private Set<UserEntity> contacts = new HashSet<>();
+
+    public UserEntity() {
+        this.wallet = new WalletBuilder()
+                .addUser(this)
+                .build();
+    }
 
     @Transient
     private void setContacts(Set<UserEntity> contacts) {
@@ -50,11 +62,11 @@ public class UserEntity {
 
     @Transient
     public void removeContact(UserEntity user) {
-        contacts.removeIf(contact -> contact.getId() == user.getId());
+        this.contacts.removeIf(contact -> contact.getId() == user.getId());
     }
 
     @Transient
     public void addContact(UserEntity user) {
-        contacts.add(user);
+        this.contacts.add(user);
     }
 }

@@ -1,6 +1,7 @@
 package fr.ocr.paymybuddy.dao;
 
 import fr.ocr.paymybuddy.entity.UserEntity;
+import fr.ocr.paymybuddy.entity.WalletEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> getUserEntityByEmail(String email);
     //select * from user u where u.id != 1 and u.id not in (select m.contacts_id from user_contacts m where m.user_id = 1);
     List<UserEntity> findUserEntityByContactsIsNotContainingAndIdIsNot(UserEntity user, int idCurrent);
+
+    UserEntity findUserEntityByWallet(WalletEntity wallet);
 }

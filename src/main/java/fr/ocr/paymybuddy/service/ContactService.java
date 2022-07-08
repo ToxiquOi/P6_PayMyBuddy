@@ -37,7 +37,7 @@ public class ContactService {
         return getCurrentUser().getContacts();
     }
 
-    public UserEntity addContactsToUser(Collection<UserEntity> contacts) {
+    public void addContactsToUser(Collection<UserEntity> contacts) {
         UserEntity currentUser = getCurrentUser();
         for(UserEntity contact : contacts) {
             if(!currentUser.getContacts().contains(contact) && !contact.getContacts().contains(currentUser)) {
@@ -46,7 +46,7 @@ public class ContactService {
             }
         }
 
-        return userRepository.saveAndFlush(currentUser);
+        userRepository.saveAndFlush(currentUser);
     }
 
     public void removeContactFromUser(Collection<UserEntity> contacts) {
