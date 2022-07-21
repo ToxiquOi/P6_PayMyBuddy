@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -16,23 +15,30 @@ import java.util.Set;
 public class ContactService {
 
     private final UserRepository userRepository;
-    private UserEntity currentUser;
+    private final AuthenticationService authenticationService;
+
 
     @Autowired
     public ContactService( UserRepository userRepository, AuthenticationService authenticationService) {
         this.userRepository = userRepository;
-        currentUser = authenticationService.getAuthenticatedUser().user();
+        this.authenticationService = authenticationService;
+    }
+
+    private UserEntity getCurrentUser() {
+        return userRepository.findById(authenticationService.getAuthenticatedUser().user().getId()).get();
     }
 
     public List<UserEntity> findUserNotInContact() {
+        UserEntity currentUser = getCurrentUser();
         return this.userRepository.findUserEntityByContactsIsNotContainingAndIdIsNot(currentUser, currentUser.getId());
     }
 
     public Set<UserEntity> findCurrentUserContact() {
-        return this.userRepository.getUserEntityByEmail(currentUser.getEmail()).get().getContacts();
+        return getCurrentUser().getContacts();
     }
 
     public void addContactsToUser(Collection<UserEntity> contacts) {
+        UserEntity currentUser = getCurrentUser();
         for(UserEntity contact : contacts) {
             if(!currentUser.getContacts().contains(contact) && !contact.getContacts().contains(currentUser)) {
                 currentUser.addContact(contact);
@@ -40,16 +46,17 @@ public class ContactService {
             }
         }
 
-        currentUser = userRepository.saveAndFlush(currentUser);
+        userRepository.saveAndFlush(currentUser);
     }
 
     public void removeContactFromUser(Collection<UserEntity> contacts) {
+        UserEntity currentUser = getCurrentUser();
         for(UserEntity contact : contacts) {
-            currentUser.removeContact(contact);
             contact.removeContact(currentUser);
+            currentUser.removeContact(contact);
         }
 
-        currentUser = userRepository.save(currentUser);
-        userRepository.saveAllAndFlush(contacts);
+        userRepository.saveAll(contacts);
+        userRepository.saveAndFlush(currentUser);
     }
 }

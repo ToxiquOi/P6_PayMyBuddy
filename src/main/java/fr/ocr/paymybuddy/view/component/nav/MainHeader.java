@@ -10,6 +10,7 @@ import com.vaadin.flow.router.RouterLink;
 import fr.ocr.paymybuddy.service.AuthenticationService;
 import fr.ocr.paymybuddy.view.ContactView;
 import fr.ocr.paymybuddy.view.MainView;
+import fr.ocr.paymybuddy.view.PaymentView;
 import fr.ocr.paymybuddy.view.ProfileView;
 import fr.ocr.paymybuddy.view.component.AppLogoComponent;
 
@@ -31,8 +32,9 @@ public class MainHeader extends HorizontalLayout {
 
         RouterLink profileLnk = new RouterLink("Profile", ProfileView.class);
         RouterLink contactLnk = new RouterLink("Contact", ContactView.class);
-        RouterLink transferLnk = new RouterLink("Transfer", MainView.class);
+        RouterLink transferLnk = new RouterLink("Transfer", PaymentView.class);
         RouterLink homeLnk = new RouterLink("Home", MainView.class);
+
         add(new DrawerToggle(), getLogo(), homeLnk, transferLnk, profileLnk, contactLnk, logout);
     }
 

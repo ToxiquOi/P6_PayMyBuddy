@@ -17,12 +17,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final MyUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public UserService(UserRepository userRepository, MyUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, MyUserDetailsService userDetailsService, PasswordEncoder passwordEncoder, AuthenticationService authenticationService) {
         this.userRepository = userRepository;
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationService = authenticationService;
+    }
+
+    public UserEntity getCurrentUser() {
+        return userRepository.findById(authenticationService.getAuthenticatedUser().user().getId()).get();
     }
 
 

@@ -8,7 +8,12 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import fr.ocr.paymybuddy.entity.UserEntity;
+import fr.ocr.paymybuddy.service.UserService;
 import fr.ocr.paymybuddy.view.component.AppLogoComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
 
 
 @Route("login")
@@ -17,7 +22,18 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
     private final LoginForm loginForm = new LoginForm();
 
-    public LoginView() {
+    @Autowired
+    public LoginView(UserService userService) {
+        if (userService.findAllUsers(null).isEmpty()) {
+            UserEntity user = new UserEntity();
+            user.setFirstname("admin");
+            user.setLastname("admin");
+            user.setPassword("admin");
+            user.setEmail("admin@admin.com");
+            user.setBirthdate(LocalDate.now());
+            userService.saveUser(user);
+        }
+
         addClassName("login-view");
         setSizeFull();
 
