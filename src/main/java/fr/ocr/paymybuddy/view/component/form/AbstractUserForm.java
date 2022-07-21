@@ -70,6 +70,7 @@ public abstract class AbstractUserForm extends FormLayout {
     protected abstract AbstractUserFormEvent createSaveEvent();
 
 
+    @Getter
     public static abstract class AbstractUserFormEvent extends ComponentEvent<AbstractUserForm> {
 
         private final UserEntity userEntity;

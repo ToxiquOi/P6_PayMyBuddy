@@ -2,37 +2,35 @@ package fr.ocr.paymybuddy.view;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import fr.ocr.paymybuddy.entity.PaymentEntity;
 import fr.ocr.paymybuddy.exception.WalletBalanceException;
-import fr.ocr.paymybuddy.service.AuthenticationService;
 import fr.ocr.paymybuddy.service.ContactService;
 import fr.ocr.paymybuddy.service.PaymentService;
 import fr.ocr.paymybuddy.service.UserService;
 import fr.ocr.paymybuddy.view.component.form.PaymentForm;
+import fr.ocr.paymybuddy.view.component.grid.PaymentGrid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.vaadin.klaudeta.PaginatedGrid;
 
 import javax.annotation.security.PermitAll;
-import java.util.Date;
+
+
 
 @PermitAll
 @Route(value = "payment", layout = MainView.class)
+@CssImport(value = "./styles/component/buddy-grid.css", themeFor = "vaadin-grid")
 public class PaymentView extends VerticalLayout {
 
     private final UserService userService;
     private final ContactService contactService;
     private final PaymentService paymentService;
 
-    private final PaginatedGrid<PaymentEntity> paymentEntityGrid = new PaginatedGrid<>(PaymentEntity.class);
+    private final PaymentGrid paymentGrid = new PaymentGrid();
 
     @Autowired
     public PaymentView(ContactService contactService, PaymentService paymentService, UserService userService) {
@@ -41,12 +39,15 @@ public class PaymentView extends VerticalLayout {
         this.contactService = contactService;
         this.paymentService = paymentService;
 
-        add(createPaymentForm(), configureGrid());
+        add(createPaymentForm(), paymentGrid);
+
+        setHorizontalComponentAlignment(Alignment.CENTER, paymentGrid);
+
         updateGrid();
     }
 
     public void updateGrid() {
-        this.paymentEntityGrid.setItems(userService.getCurrentUser()
+        this.paymentGrid.setItems(userService.getCurrentUser()
                 .getWallet()
                 .getPayments()
                 .stream()
@@ -80,32 +81,7 @@ public class PaymentView extends VerticalLayout {
        return form;
     }
 
-    public Grid<PaymentEntity> configureGrid() {
-        paymentEntityGrid.addClassName("payment-grid");
-        paymentEntityGrid.removeAllColumns();
 
-        paymentEntityGrid.addColumn(paymentEntity -> StringUtils.capitalize(paymentEntity.getSender().getUser().getFirstname()) + " " + StringUtils.capitalize(paymentEntity.getSender().getUser().getLastname()))
-                .setHeader("Sender")
-                .setSortable(true);
-        paymentEntityGrid.addColumn(paymentEntity -> StringUtils.capitalize(paymentEntity.getReceiver().getUser().getFirstname()) + " " + StringUtils.capitalize(paymentEntity.getReceiver().getUser().getLastname()))
-                .setHeader("Receiver")
-                .setSortable(true);
-        paymentEntityGrid.addColumn(PaymentEntity::getValue)
-                .setHeader("Montant")
-                .setSortable(true);
-        paymentEntityGrid.addColumn(PaymentEntity::getMessage)
-                .setHeader("Message");
-        Grid.Column<PaymentEntity> colDate = paymentEntityGrid.addColumn(PaymentEntity::getTransactionDate)
-                .setHeader("Date")
-                .setSortable(true);
-
-        colDate.setComparator((payment1, payment2) -> payment2.getTransactionDate().compareTo(payment1.getTransactionDate()));
-
-        paymentEntityGrid.setPageSize(10);
-        paymentEntityGrid.setPaginatorSize(5);
-
-        return paymentEntityGrid;
-    }
 
 
 }

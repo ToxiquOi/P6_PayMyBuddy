@@ -54,13 +54,9 @@ public class PaymentForm extends FormLayout {
 
         payButton.addClickListener(buttonClickEvent -> validateAndSave());
 
-        HorizontalLayout paymentPanel = createPaymentPanel();
-        paymentPanel.setWidthFull();
-        paymentPanel.setAlignItems(FlexComponent.Alignment.CENTER);
-        paymentPanel.setMinHeight(10, Unit.EM);
+        message.setWidthFull();
 
-
-        add(paymentPanel, payButton);
+        add(createPaymentPanel(), message, payButton);
     }
 
     public void updateContactSelect() {
@@ -90,19 +86,22 @@ public class PaymentForm extends FormLayout {
 
     private HorizontalLayout createPaymentPanel() {
         receivers.setLabel("Dest.");
+        receivers.setWidth("70%");
         receivers.setItemLabelGenerator(wallet -> wallet.getFirstname() + " " + wallet.getLastname());
         updateContactSelect();
 
         Div euroPrefix = new Div();
         euroPrefix.setText("€");
-        value.setValue(0);
+        value.setValue(1);
         value.setSuffixComponent(euroPrefix);
         value.setHasControls(true);
         value.setMin(0);
 
-        message.setWidthFull();
+        HorizontalLayout paymentPanel = new HorizontalLayout(receivers, value);
+        paymentPanel.setWidthFull();
+        paymentPanel.setVerticalComponentAlignment(FlexComponent.Alignment.END, value);
 
-        return new HorizontalLayout(receivers, value, message);
+        return paymentPanel;
     }
 
     @Getter
@@ -116,7 +115,6 @@ public class PaymentForm extends FormLayout {
         }
     }
 
-    @Getter
     public static class SendEvent extends AbstractPaymentFormEvent {
         public SendEvent(PaymentForm source, PaymentEntity paymentEntity) {
             super(source, paymentEntity);

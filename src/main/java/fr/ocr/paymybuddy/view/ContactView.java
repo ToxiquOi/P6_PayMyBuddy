@@ -2,21 +2,25 @@ package fr.ocr.paymybuddy.view;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.Theme;
 import fr.ocr.paymybuddy.entity.UserEntity;
 import fr.ocr.paymybuddy.service.ContactService;
+import fr.ocr.paymybuddy.view.component.grid.UserGrid;
 
 import javax.annotation.security.PermitAll;
 import java.util.Set;
 
 @PermitAll
 @Route(value = "contact", layout = MainView.class)
+@CssImport(value = "./styles/component/buddy-grid.css", themeFor = "vaadin-grid")
 public class ContactView extends VerticalLayout {
 
-    private final Grid<UserEntity> usersGrid = new Grid<>(UserEntity.class);
-    private final Grid<UserEntity> contactGrid = new Grid<>(UserEntity.class);
+    private final UserGrid usersGrid = new UserGrid();
+    private final UserGrid contactGrid = new UserGrid();
 
     private final ContactService contactService;
 
@@ -70,31 +74,13 @@ public class ContactView extends VerticalLayout {
         return contactGrid.getSelectedItems();
     }
 
-    private Grid<UserEntity> createUserGrid() {
+    private UserGrid createUserGrid() {
         usersGrid.addClassName("contact-user-grid");
-
-        usersGrid.setSizeFull();
-        usersGrid.setHeightFull();
-
-        usersGrid.setSelectionMode(Grid.SelectionMode.MULTI);
-
-        usersGrid.setColumns("lastname", "firstname", "birthdate");
-        usersGrid.getColumns().forEach(col -> col.setAutoWidth(true));
-
         return usersGrid;
     }
 
-    private Grid<UserEntity> createContactGrid() {
+    private UserGrid createContactGrid() {
         contactGrid.addClassName("contact-contact-grid");
-
-        contactGrid.setSizeFull();
-        contactGrid.setHeightFull();
-
-        contactGrid.setSelectionMode(Grid.SelectionMode.MULTI);
-
-        contactGrid.setColumns("lastname", "firstname", "birthdate");
-        contactGrid.getColumns().forEach(col -> col.setAutoWidth(true));
-
         return contactGrid;
     }
 
