@@ -1,6 +1,11 @@
 node_modules
 HELP.md
 target/
+
+### Vaadin ###
+./frontend/generated
+
+### Maven and Compil ###
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
