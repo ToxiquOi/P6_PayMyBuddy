@@ -1,10 +1,12 @@
 :host(.buddy-grid) [part="cell header-cell"] {
     background-color: #5cb95c;
+    text-align: center;
     color: white;
     height: 6em;
 }
 :host(.buddy-grid) [part="cell body-cell"] {
     height: 5em;
+    text-align: center;
     align-items: center;
 }
 
@@ -13,8 +15,4 @@
 }
 :host(.user-grid) [part="cell body-cell"] {
     height: 3em;
-}
-
-:host(#vaadin-checkbox-8) {
-    background-color: white;
 }

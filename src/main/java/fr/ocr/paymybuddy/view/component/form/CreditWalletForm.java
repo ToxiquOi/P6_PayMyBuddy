@@ -6,11 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
-import fr.ocr.paymybuddy.model.CreditWalletModel;
 import lombok.Getter;
 
 public class CreditWalletForm extends FormLayout {
@@ -18,12 +14,8 @@ public class CreditWalletForm extends FormLayout {
     private final IntegerField value = new IntegerField("Montant à créditer");
     private final Button validateButton = new Button("Valider", e -> validateAndSave());
 
-    private final Binder<CreditWalletModel> binder = new Binder<>(CreditWalletModel.class);
-
     public CreditWalletForm() {
         addClassName("credit-form");
-
-        binder.forField(value).bind(provider -> value.getValue(), CreditWalletModel::setValue);
 
         Div euroPrefix = new Div();
         euroPrefix.setText("€");
@@ -40,30 +32,23 @@ public class CreditWalletForm extends FormLayout {
     }
 
     private void validateAndSave() {
-        CreditWalletModel creditWalletModel = new CreditWalletModel();
-
-        try {
-            binder.writeBean(creditWalletModel);
-            fireEvent(new SendEvent(this, creditWalletModel));
-        } catch (ValidationException e) {
-            e.printStackTrace();
-        }
+        fireEvent(new SendEvent(this, value.getValue()));
     }
 
     @Getter
     public static abstract class AbstractCreditWalletFormEvent extends ComponentEvent<CreditWalletForm> {
 
-        private final CreditWalletModel creditWalletModel;
+        private final int credit;
 
-        public AbstractCreditWalletFormEvent(CreditWalletForm source, CreditWalletModel creditWalletModel) {
+        public AbstractCreditWalletFormEvent(CreditWalletForm source, int credit) {
             super(source, false);
-            this.creditWalletModel = creditWalletModel;
+            this.credit = credit;
         }
     }
 
     public static class SendEvent extends AbstractCreditWalletFormEvent {
-        public SendEvent(CreditWalletForm source, CreditWalletModel creditWalletModel) {
-            super(source, creditWalletModel);
+        public SendEvent(CreditWalletForm source, int credit) {
+            super(source, credit);
         }
     }
 

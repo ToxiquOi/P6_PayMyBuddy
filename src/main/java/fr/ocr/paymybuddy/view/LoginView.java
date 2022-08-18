@@ -1,6 +1,8 @@
 package fr.ocr.paymybuddy.view;
 
 import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -8,6 +10,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import fr.ocr.paymybuddy.entity.UserEntity;
 import fr.ocr.paymybuddy.service.UserService;
 import fr.ocr.paymybuddy.view.component.AppLogoComponent;
@@ -16,23 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 
 
+@AnonymousAllowed
 @Route("login")
 @PageTitle("Login | PayMyBuddy")
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
     private final LoginForm loginForm = new LoginForm();
+    private final Button inscriptionButton = new Button("Sign On");
 
     @Autowired
-    public LoginView(UserService userService) {
-        if (userService.findAllUsers(null).isEmpty()) {
-            UserEntity user = new UserEntity();
-            user.setFirstname("admin");
-            user.setLastname("admin");
-            user.setPassword("admin");
-            user.setEmail("admin@admin.com");
-            user.setBirthdate(LocalDate.now());
-            userService.saveUser(user);
-        }
+    public LoginView() {
 
         addClassName("login-view");
         setSizeFull();
@@ -80,9 +76,13 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
     private VerticalLayout createCenteredLayout() {
         AppLogoComponent appLogoComponent = new AppLogoComponent();
         LoginI18n i18n = createLoginI18n();
-        VerticalLayout centeredLayout = new VerticalLayout(appLogoComponent, loginForm);
+        VerticalLayout centeredLayout = new VerticalLayout(appLogoComponent, loginForm, inscriptionButton);
+
+        inscriptionButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        inscriptionButton.addClickListener(event -> getUI().ifPresent(ui -> ui.navigate("inscription")));
 
         loginForm.setAction("login");
+        loginForm.addLoginListener(event -> getUI().ifPresent(ui -> ui.navigate(PaymentView.class)));
         loginForm.setI18n(i18n);
 
         centeredLayout.setMaxWidth(120, Unit.MM);

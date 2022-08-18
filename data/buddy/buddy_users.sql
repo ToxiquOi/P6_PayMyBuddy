@@ -1,0 +1,5 @@
+INSERT INTO buddy.users (id, birthdate, email, firstname, lastname, password, wallet_id) VALUES (1, '2022-07-07', 'admin@admin.com', 'admin', 'admin', '$2a$10$On/PBu4ojtuKhiqoE55SRuRi/.ETc84sawghQrxHzy5Lz28dpz9wu', 1);
+INSERT INTO buddy.users (id, birthdate, email, firstname, lastname, password, wallet_id) VALUES (2, '2022-07-13', 'qwerty@qwerty.fr', 'qwerty', 'qwerty', '$2a$10$ZWZEXN9q.q1Nsh6uEAjG3ePztH1gN60e8td8cKUPkUxcaJZf7wRve', 2);
+INSERT INTO buddy.users (id, birthdate, email, firstname, lastname, password, wallet_id) VALUES (3, '2022-07-05', 'azerty@azerty.fr', 'azerty', 'azerty', '$2a$10$wliEKBQxlbkb9qQMASYFJ.BEf90Jxb/6hEZBzbKkvsYOtbcLujYpC', 3);
+INSERT INTO buddy.users (id, birthdate, email, firstname, lastname, password, wallet_id) VALUES (4, '2022-02-17', 'test123@test.fr', 'test', 'test', '$2a$10$w/Ygg15qPYMqU9MqBwICC.P25q9RxnBEd5Z7wtA35o7B.bndtqb6u', 4);
+INSERT INTO buddy.users (id, birthdate, email, firstname, lastname, password, wallet_id) VALUES (5, '1997-01-15', 'gau.vui97@hotmail.com', 'Gauthier', 'Vuillemin', '$2a$10$qROqigHY0BWYaHl7tkXoKOj3wH1I9CQaYIuriPNt7T9uDM5V/kTLe', 5);

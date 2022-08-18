@@ -6,8 +6,9 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 import fr.ocr.paymybuddy.entity.UserEntity;
+import lombok.Getter;
 
-
+@Getter
 public class UserFormComponent extends AbstractUserForm {
 
     private final Button save = new Button("Save");

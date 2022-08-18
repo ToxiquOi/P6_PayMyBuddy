@@ -8,6 +8,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -54,8 +55,9 @@ public class PaymentForm extends FormLayout {
 
         payButton.addClickListener(buttonClickEvent -> validateAndSave());
 
-        message.setWidthFull();
-
+        message.setMinWidth("100%");
+        message.addClassName("message-field");
+        payButton.setMinWidth("100%");
         add(createPaymentPanel(), message, payButton);
     }
 
@@ -86,8 +88,8 @@ public class PaymentForm extends FormLayout {
 
     private HorizontalLayout createPaymentPanel() {
         receivers.setLabel("Dest.");
-        receivers.setWidth("70%");
         receivers.setItemLabelGenerator(wallet -> wallet.getFirstname() + " " + wallet.getLastname());
+        receivers.setMinWidth(15, Unit.EM);
         updateContactSelect();
 
         Div euroPrefix = new Div();
@@ -96,11 +98,14 @@ public class PaymentForm extends FormLayout {
         value.setSuffixComponent(euroPrefix);
         value.setHasControls(true);
         value.setMin(0);
+        value.setMinWidth(5, Unit.EM);
+
 
         HorizontalLayout paymentPanel = new HorizontalLayout(receivers, value);
-        paymentPanel.setWidthFull();
-        paymentPanel.setVerticalComponentAlignment(FlexComponent.Alignment.END, value);
-
+        paymentPanel.addClassName("receiver-value-panel");
+        paymentPanel.setFlexGrow(1, receivers);
+        paymentPanel.setFlexGrow(2, value);
+        paymentPanel.setMinWidth("100%");
         return paymentPanel;
     }
 

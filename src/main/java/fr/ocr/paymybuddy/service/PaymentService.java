@@ -51,6 +51,10 @@ public class PaymentService {
         walletService.save(payment.getReceiver());
     }
 
+    public int countPaymentOfUser(int walletId) {
+        return paymentRepository.countAllBySenderIdOrReceiverId(walletId, walletId);
+    }
+
     private void save(PaymentEntity paymentEntity) {
         if (paymentEntity == null) {
             System.err.println("Contact is null. Are you sure you have connected your form to the application?");

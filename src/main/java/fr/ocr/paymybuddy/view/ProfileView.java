@@ -1,6 +1,7 @@
 package fr.ocr.paymybuddy.view;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import fr.ocr.paymybuddy.entity.UserEntity;
@@ -35,6 +36,7 @@ public class ProfileView extends VerticalLayout {
         setJustifyContentMode(JustifyContentMode.CENTER);
         setSizeFull();
 
+        viewWalletButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         viewWalletButton.addClickListener(buttonClickEvent ->  showWalletDialog());
 
 
@@ -68,7 +70,7 @@ public class ProfileView extends VerticalLayout {
         WalletDialog dialog = new WalletDialog(currentUser.getWallet());
 
         dialog.addSendListener((event) -> {
-           this.walletService.addMoneyToWallet(event.getCreditWalletModel().getValue(), currentUser.getWallet());
+           this.walletService.addMoneyToWallet(event.getCredit(), currentUser.getWallet());
            this.walletService.save(currentUser.getWallet());
            dialog.updateDialog(currentUser.getWallet());
         });

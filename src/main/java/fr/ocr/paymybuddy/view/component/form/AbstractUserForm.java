@@ -5,6 +5,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -36,7 +37,9 @@ public abstract class AbstractUserForm extends FormLayout {
      * Need to be invoked in derived constructor if form struct not require change
      */
     protected void createDefaultLayout() {
-        add(firstname, lastname, birthdate, email, password, createButtonsLayout());
+        VerticalLayout formVerticalLayout = new VerticalLayout(firstname, lastname, birthdate, email, password, createButtonsLayout());
+        formVerticalLayout.addClassName("user-form-vertical-layout");
+        add(formVerticalLayout);
     }
 
     public void setUser(UserEntity user) {
@@ -49,6 +52,14 @@ public abstract class AbstractUserForm extends FormLayout {
         getLastname().setReadOnly(enabled);
         getBirthdate().setReadOnly(enabled);
         getEmail().setReadOnly(enabled);
+    }
+
+    public void setFieldFullWidth() {
+        email.setWidthFull();
+        birthdate.setWidthFull();
+        firstname.setWidthFull();
+        lastname.setWidthFull();
+        password.setWidthFull();
     }
 
     protected void validateAndSave() {

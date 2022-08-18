@@ -12,4 +12,5 @@ import java.util.Set;
 @Repository
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Integer> {
     Set<PaymentEntity> findAllBySenderIdIsOrReceiverIdIs(int id1, int id2);
+    int countAllBySenderIdOrReceiverId(int id1, int id2);
 }
