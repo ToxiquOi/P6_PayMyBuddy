@@ -4,6 +4,7 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -39,6 +40,7 @@ public abstract class AbstractUserForm extends FormLayout {
     protected void createDefaultLayout() {
         VerticalLayout formVerticalLayout = new VerticalLayout(firstname, lastname, birthdate, email, password, createButtonsLayout());
         formVerticalLayout.addClassName("user-form-vertical-layout");
+        formVerticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
         add(formVerticalLayout);
     }
 

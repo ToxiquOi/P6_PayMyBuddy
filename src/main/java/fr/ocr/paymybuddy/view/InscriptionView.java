@@ -27,7 +27,7 @@ public class InscriptionView extends VerticalLayout {
         H1 title = new H1("Sign on Pay My Buddy !");
 
         userForm.setFieldFullWidth();
-        userForm.setWidth("35%");
+        userForm.setWidth("100%");
         userForm.addListener(UserInscriptionForm.ReturnEvent.class, returnEvent -> navigateToLogin());
         userForm.addListener(UserInscriptionForm.CreateEvent.class, createEvent -> {
             userService.saveUser(createEvent.getUserEntity());
@@ -35,8 +35,7 @@ public class InscriptionView extends VerticalLayout {
         });
 
         setHorizontalComponentAlignment(Alignment.START, logo);
-        setHorizontalComponentAlignment(Alignment.CENTER, title);
-        setHorizontalComponentAlignment(Alignment.CENTER, userForm);
+        setHorizontalComponentAlignment(Alignment.CENTER, title, userForm);
         add(logo, title, userForm);
     }
 

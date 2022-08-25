@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 
 import javax.annotation.security.PermitAll;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 
 
 @PermitAll
@@ -48,7 +49,6 @@ public class PaymentView extends VerticalLayout {
         this.paymentService = paymentService;
         this.paginatedPaymentRepository = paginatedPaymentRepository;
 
-
         VerticalLayout gridLayout = new VerticalLayout();
         gridLayout.addClassName("grid-layout");
         H3 gridLabel = new H3("Mes transactions");
@@ -58,10 +58,13 @@ public class PaymentView extends VerticalLayout {
         gridLayout.setWidth("80%");
 
         int currentUserId = userService.getCurrentUser().getWallet().getId();
-        paymentGrid.setDataProvider(DataProvider.fromCallbacks((fetch) ->
-                        paginatedPaymentRepository.findAllBySenderIdIsOrReceiverIdIsOrderByTransactionDateDesc(currentUserId, currentUserId, PageRequest.of(fetch.getPage(), 4)).stream(),
-                (count) -> this.paymentService.countPaymentOfUser(currentUserId))
-        );
+        paymentGrid.setDataProvider(DataProvider.fromCallbacks(
+                (fetch) -> paginatedPaymentRepository.findAllBySenderIdIsOrReceiverIdIsOrderByTransactionDateDesc(currentUserId, currentUserId, PageRequest.of(fetch.getPage(), 4))
+                        .stream(),
+                (count) -> this.paymentService.countPaymentOfUser(currentUserId)
+        ));
+
+        paymentGrid.getDataProvider().refreshAll();
 
         setHorizontalComponentAlignment(Alignment.CENTER, gridLayout);
         add(createPaymentForm(), gridLayout);

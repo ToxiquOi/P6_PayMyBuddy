@@ -35,7 +35,7 @@ public class MainHeader extends HorizontalLayout {
         RouterLink transferLnk = new RouterLink("Transfer", PaymentView.class);
 
 
-        add(new DrawerToggle(), getLogo(), transferLnk, profileLnk, contactLnk, logout);
+        add(/*new DrawerToggle(),*/ getLogo(), transferLnk, profileLnk, contactLnk, logout);
     }
 
     private Component getLogo() {
