@@ -3,7 +3,6 @@ package fr.ocr.paymybuddy.entity;
 import fr.ocr.paymybuddy.exception.WalletBalanceException;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 
 
 import javax.persistence.*;
@@ -11,8 +10,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.hibernate.annotations.CascadeType.*;
 
 @Getter
 @Setter

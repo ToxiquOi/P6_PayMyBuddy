@@ -3,7 +3,6 @@ package fr.ocr.paymybuddy.view;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.grid.dataview.GridLazyDataView;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
@@ -12,7 +11,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.router.Route;
 import fr.ocr.paymybuddy.dao.PaginatedPaymentRepository;
-import fr.ocr.paymybuddy.entity.PaymentEntity;
 import fr.ocr.paymybuddy.exception.WalletBalanceException;
 import fr.ocr.paymybuddy.service.ContactService;
 import fr.ocr.paymybuddy.service.PaymentService;
@@ -23,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
 import javax.annotation.security.PermitAll;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
 
 
 @PermitAll
@@ -37,17 +33,15 @@ public class PaymentView extends VerticalLayout {
     private final UserService userService;
     private final ContactService contactService;
     private final PaymentService paymentService;
-    private final PaginatedPaymentRepository paginatedPaymentRepository;
 
     private final PaymentGrid paymentGrid = new PaymentGrid();
 
     @Autowired
-    public PaymentView(ContactService contactService, PaymentService paymentService, UserService userService, PaginatedPaymentRepository paginatedPaymentRepository) {
+    public PaymentView(ContactService contactService, PaymentService paymentService, UserService userService) {
         addClassName("payment-view");
         this.userService = userService;
         this.contactService = contactService;
         this.paymentService = paymentService;
-        this.paginatedPaymentRepository = paginatedPaymentRepository;
 
         VerticalLayout gridLayout = new VerticalLayout();
         gridLayout.addClassName("grid-layout");
@@ -59,8 +53,7 @@ public class PaymentView extends VerticalLayout {
 
         int currentUserId = userService.getCurrentUser().getWallet().getId();
         paymentGrid.setDataProvider(DataProvider.fromCallbacks(
-                (fetch) -> paginatedPaymentRepository.findAllBySenderIdIsOrReceiverIdIsOrderByTransactionDateDesc(currentUserId, currentUserId, PageRequest.of(fetch.getPage(), 4))
-                        .stream(),
+                (fetch) -> paymentService.getCurrentUserPayment(fetch.getPage()).stream(),
                 (count) -> this.paymentService.countPaymentOfUser(currentUserId)
         ));
 

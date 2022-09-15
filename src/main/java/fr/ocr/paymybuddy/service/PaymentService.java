@@ -1,14 +1,15 @@
 package fr.ocr.paymybuddy.service;
 
+import fr.ocr.paymybuddy.dao.PaginatedPaymentRepository;
 import fr.ocr.paymybuddy.dao.PaymentRepository;
 import fr.ocr.paymybuddy.entity.PaymentEntity;
 import fr.ocr.paymybuddy.entity.UserEntity;
 import fr.ocr.paymybuddy.exception.WalletBalanceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Lazy
 @Service
@@ -17,21 +18,26 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final AuthenticationService authenticationService;
     private final WalletService walletService;
+    private final PaginatedPaymentRepository paginatedPaymentRepository;
 
     public UserEntity getCurrentUser() {
         return authenticationService.getAuthenticatedUser().user();
     }
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, AuthenticationService authenticationService, WalletService walletService) {
+    public PaymentService(PaymentRepository paymentRepository, PaginatedPaymentRepository paginatedPaymentRepository, AuthenticationService authenticationService, WalletService walletService) {
         this.paymentRepository = paymentRepository;
         this.authenticationService = authenticationService;
         this.walletService = walletService;
+        this.paginatedPaymentRepository = paginatedPaymentRepository;
     }
 
-    public Set<PaymentEntity> getCurrentUserPayment() {
+    public Slice<PaymentEntity> getCurrentUserPayment(int page) {
         UserEntity currentUser = getCurrentUser();
-        return paymentRepository.findAllBySenderIdIsOrReceiverIdIs(currentUser.getId(), currentUser.getId());
+        return paginatedPaymentRepository.findAllBySenderIdIsOrReceiverIdIsOrderByTransactionDateDesc(
+                currentUser.getId(),
+                currentUser.getId(),
+                PageRequest.of(page, 4));
     }
 
     public void proceedToPayment(PaymentEntity payment) throws WalletBalanceException {
