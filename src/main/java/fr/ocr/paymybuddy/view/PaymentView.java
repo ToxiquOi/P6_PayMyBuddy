@@ -10,7 +10,6 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.router.Route;
-import fr.ocr.paymybuddy.dao.PaginatedPaymentRepository;
 import fr.ocr.paymybuddy.exception.WalletBalanceException;
 import fr.ocr.paymybuddy.service.ContactService;
 import fr.ocr.paymybuddy.service.PaymentService;
@@ -18,7 +17,6 @@ import fr.ocr.paymybuddy.service.UserService;
 import fr.ocr.paymybuddy.view.component.form.PaymentForm;
 import fr.ocr.paymybuddy.view.component.grid.PaymentGrid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 
 import javax.annotation.security.PermitAll;
 
