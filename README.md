@@ -1,6 +1,13 @@
 # PayMyBuddy
 Projet 6 OCR
 
+## Documentation
+### Diagrammes
+Les artefactes concernant la structure de l'application et de la DB se trouve dans le dossier 'doc/'.
+
+### DB
+Un script permettant de générer la structure de DB se trouve dans le dossier 'data/buddy/'
+
 ## Prérequis
 
 - Java 17
